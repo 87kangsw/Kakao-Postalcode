@@ -12,7 +12,27 @@
   <script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
   <script>
     window.addEventListener("message", onReceivedPostMessage, false);
+    
+    function getMobileOperatingSystem() {
+      var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
+      // Windows Phone must come first because its UA also contains "Android"
+      if (/windows phone/i.test(userAgent)) {
+        return "Windows Phone";
+      }
+
+      if (/android/i.test(userAgent)) {
+        return "Android";
+      }
+
+      // iOS detection from: http://stackoverflow.com/a/9039885/177710
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return "iOS";
+      }
+
+      return "unknown";
+    }
+    
     function onReceivedPostMessage(event){
       //..ex deconstruct event into action & params
       var action = event.data.action;
@@ -43,13 +63,20 @@
           } else if (data.autoJibunAddress == "") {
             jibunAddress = data.jibunAddress
           }
-
-          var postData = {
-              roadAddress : data.roadAddress,
-              jibunAddress : jibunAddress,
-              zonecode : data.zonecode
-          };
-          window.postMessageToiOS(postData);
+          
+          if getMobileOperatingSystem == 'iOS' {
+            
+            var postData = {
+                address : data.address,
+                zonecode : data.zonecode
+            };
+             window.postMessageToiOS(postData);
+          } else if getMobileOperatingSystem == 'Android' {
+             window.Android.processDATA(JSON.stringify({
+                    address: data.address,
+                    zoneCode: data.zonecode
+             }));
+          }
         },
         width : '100%',
         height : '100%'
