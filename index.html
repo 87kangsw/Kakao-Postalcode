@@ -64,14 +64,14 @@
             jibunAddress = data.jibunAddress
           }
           
-          if getMobileOperatingSystem == 'iOS' {
+          if getMobileOperatingSystem() == 'iOS' {
             
             var postData = {
                 address : data.address,
                 zonecode : data.zonecode
             };
              window.postMessageToiOS(postData);
-          } else if getMobileOperatingSystem == 'Android' {
+          } else if getMobileOperatingSystem() == 'Android' {
              window.Android.processDATA(JSON.stringify({
                     address: data.address,
                     zoneCode: data.zonecode
